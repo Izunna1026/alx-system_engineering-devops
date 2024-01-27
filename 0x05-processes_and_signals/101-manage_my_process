@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# This manages the script manage_my_process
+# when it receieved the argument 'start':
+#	a. It starts the manage_my_process
+#	b. It creates a file containing its PID in var/run/my_process.pid
+#	c. It displays the message "manage my process has started"
+# when it receieved the argument 'stop':
+#	a. It stops the manage_my_process
+#	b. It deletes the file var/run/my_process.pid
+#	c. It displays the message "manage my process stopped"
+# When it receieved the argument 'restart'
+#	a. Stops the manage_my_process
+#	b. Deletes the file var/run/my_process.pid
+#	c. It will start manage_my_process
+#	d. it creates a file containing PID in var/run/my_process.pid
+#	e. It displays "manage my process restarted"
+# Displays "usage: manage my process {start|stop| restart}
+
+if [ "${1}" == "start" ]
+then
+	./manage_my_process &
+	touch /var/run/my_process.pid
+	echo "$!" > /var/run/my_process.pid
+	echo "manage_my_process started"
+elif [ "${1}" == "stop" ]
+then
+	echo "manage_my_process stopped"
+	kill "$(cat /var/run/my_process.pid)"
+	rm /var/run/my_process.pid
+elif [ "${1}" == "restart" ]
+then
+	kill "$(cat /var/run/my_process.pid)"
+	rm /var/run/my_process.pid
+	./manage_my_process &
+	touch /var/run/my_process.pid
+	echo "$!" > /var/run/my_process.pid
+	echo "manage_my_process restarted"
+else
+	echo "Usage: manage_my_process {start|stop|restart}"
+fi
